@@ -7,11 +7,21 @@ using System.Threading.Tasks;
 
 namespace WorkerInventory.Repositories.JSON
 {
-    public class JSONRepository //: IJSONRepository <- Causes error due to static coding
+    public class JSONRepository
     {
-        //public static class JsonHelper
-        //{
-            public static string FromClass<TClass>
+        // Taken from https://www.codeproject.com/Articles/5339651/Working-with-System-Text-Json-in-Csharp
+
+        /// <summary>
+        /// Convert Class to Json object (string)
+        /// </summary>
+        /// <typeparam name="TClass">Class type to be serialized</typeparam>
+        /// <param name="data">Class to serialize</param>
+        /// <param name="isEmptyToNull">true = return null if empty; 
+        /// false empty Json object</param>
+        /// <param name="options">JsonSerializer options</param>
+        /// <returns>Json encoded string</returns>
+
+        public static string FromClass<TClass>
                 (TClass data, bool isEmptyToNull = false, JsonSerializerOptions? options = null)
                 where TClass : class
             {
@@ -22,7 +32,16 @@ namespace WorkerInventory.Repositories.JSON
                 return isEmptyToNull ? response == "{}" ? "null" : response : response;
             }
 
-            public static TClass? ToClass<TClass>(string data, JsonSerializerOptions? options = null)
+
+        /// <summary>
+        /// Convert a Json object (string) to a class
+        /// </summary>
+        /// <typeparam name="TClass">Class type to be deserialized into</typeparam>
+        /// <param name="data">Json string to be deserialized</param>
+        /// <param name="options">JsonSerializer options</param>
+        /// <returns>Deserialized class of TClass</returns>
+
+        public static TClass? ToClass<TClass>(string data, JsonSerializerOptions? options = null)
                 where TClass : class
             {
                 options = new JsonSerializerOptions
@@ -32,6 +51,6 @@ namespace WorkerInventory.Repositories.JSON
                 TClass? response = default(TClass);
                 return string.IsNullOrEmpty(data) ? response : JsonSerializer.Deserialize<TClass>(data, options ?? null);
             }
-        //}
+        
     }
 }
